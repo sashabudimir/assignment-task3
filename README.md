@@ -1,38 +1,63 @@
-# Volunteam App
+# Volunteam — Project 1.3
 
-## Setting up the fake API (json-server)
+This project implements the complete **Create Event** data flow for the Volunteam app.
 
-Update the file `src/services/api.ts`.
+## Requirements implemented
 
-Before running your 'json-server', get your computer's IP address and update your baseURL to `http://your_ip_address_here:3333` and then run:
+- Fetches events from the API whenever the map screen receives focus.
+- Saves successful event responses in AsyncStorage and falls back to that cache when the API is unavailable.
+- Filters out past or invalid events and displays future events as map markers.
+- Fits the map to the available future events and the current user's location.
+- Shows the actual number of displayed events in the map footer.
+- Provides a two-step create flow: choose a map location, then complete the event form.
+- Validates every field and keeps Save disabled until the form is complete.
+- Requests camera or photo-library permission before selecting a photo.
+- Uploads the selected photo to ImgBB and displays its thumbnail, filename, and size.
+- Persists the new event to the API and refreshes the map when returning to it.
 
+## Setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+
+2. Copy `.env.example` to `.env` and replace the sample values:
+
+   ```text
+   API_URL=http://YOUR_COMPUTER_IP:3333
+   IMGBB_API_KEY=YOUR_IMGBB_API_KEY
+   ```
+
+   Create a free image-upload key at <https://api.imgbb.com/>. Never commit the real key.
+
+3. Start the local API in one terminal:
+
+   ```bash
+   npm run api
+   ```
+
+4. Start Expo in a second terminal. For this Expo SDK version, provide the variables to the process.
+
+   PowerShell:
+
+   ```powershell
+   $env:API_URL="http://YOUR_COMPUTER_IP:3333"
+   $env:IMGBB_API_KEY="YOUR_IMGBB_API_KEY"
+   npx expo start --lan --clear
+   ```
+
+## Demo login
+
+- Email: `luigi@carluccio.it`
+- Password: `password`
+
+## Verification
+
+```bash
+npm run typecheck
+npm test
 ```
-npx json-server --watch db.json --port 3333 --host your_ip_address_here -m ./node_modules/json-server-auth
-```
 
-To access your server online without running json-server locally, you can set your baseURL to:
-
-```
-https://my-json-server.typicode.com/<your-github-username>/<your-github-repo>
-```
-
-To use `my-json-server`, make sure your `db.json` is located at the repo root.
-
-## Setting up the image upload API
-
-Update the file `src/services/imageApi.ts`.
-
-You can use any hosting service of your preference. In this case, we will use ImgBB API: https://api.imgbb.com/.
-Sign up for free at https://imgbb.com/signup, get your API key and add it to the .env file in your root folder.
-
-To run the app in your local environment, you will need to set the IMGBB_API_KEY when starting the app using:
-
-```
-IMGBB_API_KEY="insert_your_api_key_here" npx expo start
-```
-
-When creating your app build or publishing, import your secret values to EAS running:
-
-```
-eas secret:push
-```
+For offline-cache testing, first load the map while the API is running. Stop the API and reload the map; the app will show the saved events with an offline banner.
